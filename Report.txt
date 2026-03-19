@@ -1,0 +1,60 @@
+Multi-Source Scraper and Trust Scoring System
+Technical Weighting Rationale
+
+1) Objective
+The trust score is designed to balance source reliability, evidence strength, freshness,
+and compliance indicators while keeping the model interpretable and auditable.
+
+2) Implemented Formula
+TrustScore = (w1 * AC) + (w2 * CC) + (w3 * DA) + (w4 * R) + (w5 * MD)
+
+Weights:
+- AC (Author Credibility): 0.25
+- CC (Citation Count): 0.20
+- DA (Domain Authority): 0.20
+- R (Recency): 0.20
+- MD (Medical Disclaimer): 0.15
+
+All weights are normalized in code if custom values are supplied.
+
+3) Why AC Is Highest (0.25)
+Author credibility is given the highest weight because attribution quality is a primary
+signal in multi-source environments. Verified organizations have editorial controls,
+review practices, and reputational constraints that materially reduce misinformation risk.
+
+4) Why Recency and Authority Are Balanced (0.20 vs 0.20)
+Recency (R = 0.20):
+- Medical and technology information can become outdated quickly.
+- Recency is modeled with exponential decay to prevent abrupt discontinuities.
+- A recency cap (older than 5 years => max final score 0.7) guards against stale but
+  otherwise strong-looking content.
+
+Authority (DA = 0.20):
+- Domain-level prior reliability is useful but should not dominate all other signals.
+- DA remains equal to recency so old authoritative pages are not over-credited, and
+  new low-authority pages are not over-rewarded.
+
+This balance enforces practical fairness between source reputation and temporal relevance.
+
+5) Why CC Is 0.20
+Citation count is useful but non-linear in value; therefore log-normalization is used.
+This prevents highly cited records from overwhelming the entire score while still
+rewarding strong evidence density.
+
+6) Why MD Is 0.15 + Explicit Penalties
+Medical disclaimers are modeled as a direct compliance signal.
+- Baseline contribution through MD weight = 0.15.
+- Additional hard penalty for PubMed without disclaimer: 0.5 multiplier.
+This two-layer treatment allows MD to influence normal ranking while still enforcing
+strict abuse-prevention behavior in high-sensitivity contexts.
+
+7) Range and Transparency Guarantees
+- Output score is clamped to [0, 1].
+- Every component (AC, CC, DA, R, MD) is exposed in code and independently testable.
+- Penalty flags are surfaced in scoring outputs for auditability.
+
+8) Conclusion
+The selected weighting profile prioritizes identity and accountability (AC), then balances
+source quality (DA), evidence (CC), and time relevance (R), while preserving a distinct
+compliance channel (MD). This supports both integrity and explainability requirements for
+production-grade trust scoring.
