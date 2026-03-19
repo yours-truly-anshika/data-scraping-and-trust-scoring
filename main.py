@@ -47,6 +47,9 @@ def _score_record(record: dict[str, Any]) -> dict[str, Any]:
     scoring_metadata["medical_disclaimer_presence"] = record.get("medical_disclaimer_presence")
     scoring_metadata["has_medical_disclaimer"] = record.get("has_medical_disclaimer")
     scoring_metadata["text_for_disclaimer_check"] = record.get("content", "")
+    is_medical_content = record.get("is_medical_content", metadata.get("is_medical_content"))
+    if isinstance(is_medical_content, bool):
+        scoring_metadata["is_medical_content"] = is_medical_content
 
     try:
         breakdown = score_from_metadata(scoring_metadata)
