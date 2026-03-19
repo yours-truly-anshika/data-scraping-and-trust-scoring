@@ -51,15 +51,29 @@ python -c "import requests, bs4, lxml, youtube_transcript_api, Bio.Entrez, entre
 - `src/utils/validation.py`: Medical disclaimer boolean detection.
 - `src/scoring/trust_score.py`: Transparent weighted trust scoring with abuse-prevention penalties.
 
-## Project structure
+## Project Structure
 
-- `src/scrapers/`: Blog, YouTube, and PubMed collection logic.
-- `src/nlp/`: Language detection, tagging, and chunking.
-- `src/scoring/`: Trust-scoring logic.
-- `data/raw/`: Raw scraped artifacts (ignored by git).
-- `data/processed/`: Cleaned outputs and features (ignored by git).
-- `notebooks/`: Exploratory analysis.
-- `tests/`: Unit/integration tests.
+```
+data-scraping-and-trust-scoring/
+├── data/
+│   ├── raw/               # Raw scraped artifacts (git-ignored)
+│   └── processed/         # Temporary processing storage
+├── output/
+│   └── scraped_data.json  # FINAL production output (6 sources)
+├── scripts/
+│   ├── run_data_acquisition.py   # Data collection runner
+│   └── validate_scraped_data.py  # Schema & Trust Score validator
+├── src/
+│   ├── scrapers/          # Modules for Blog, YouTube, and PubMed
+│   ├── scoring/           # TrustScore algorithm & penalty logic
+│   └── utils/             # NLP (Tagging, Chunking, Disclaimer detection)
+├── tests/
+│   └── test_scoring.py    # Unit tests for the scoring engine
+├── main.py                # Main Pipeline Orchestrator (Entry Point)
+├── README.md              # Setup & Documentation
+├── Report.txt             # Technical logic & weighting report
+└── requirements.txt       # Project dependencies
+```
 
 ## Execution
 
